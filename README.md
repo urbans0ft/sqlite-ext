@@ -5,7 +5,7 @@
         * [Cygwin](#cygwin)
         * [Windows](#windows)
         * [Linux](#linux)
-    * Exampe(#example)
+    * [Example](#example)
 * [Build](#build)
     * [Cygwin](#cygwin-64-bit)
     * [Windows](#windows-64-bit)
