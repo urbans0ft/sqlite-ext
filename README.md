@@ -42,7 +42,7 @@ sqlite> .load 'bin/UNIX64/regexp.so'
 
 ## Example
 
-The extensions have to [loaded](#loading-extensions) beforehand.
+The extensions need to be [loaded](#loading-extensions) beforehand.
 
 ```
 sqlite> SELECT uuid();
