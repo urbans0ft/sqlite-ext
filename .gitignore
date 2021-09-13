@@ -1,0 +1,7 @@
+# ignore hidden files...
+.*
+
+# ... but not this one
+!.gitignore
+
+bin/
