@@ -1,3 +1,14 @@
+# Table of Content
+
+* [Usage](#usage)
+    * [Cygwin](#cygwin)
+    * [Windows](#windows)
+    * [Linux](#linux)
+* [Build](#build)
+    * [Cygwin](cygwin-64-bit)
+    * [Windows](windows-64-bit)
+    * [Linux](linux-64-bit)
+
 # Usage
 
 ## Cygwin
