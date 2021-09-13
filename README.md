@@ -44,6 +44,8 @@ sqlite> .load 'bin/UNIX64/regexp.so'
 
 The extensions need to be [loaded](#loading-extensions) beforehand.
 
+### uuid & regexp
+
 ```
 sqlite> SELECT uuid();
 afe6ae32-320b-44c2-bff8-f9cb4c7aa6b6
@@ -53,6 +55,20 @@ sqlite> SELECT regexp('^[0-9a-f]{8}(-[0-9a-f]{4}){4}[0-9a-f]{8}$', uuid());
 1
 sqlite> SELECT regexp('^[0-9a-f]{8}(-[0-9a-f]{4}){4}[0-9a-f]{8}$', 'I am not a UUID');
 0
+```
+
+### udp
+
+#### Server
+
+```
+$ nc -kluv4w0 localhost 27015
+```
+
+### Client
+
+```
+SELECT udp('Hello World!');
 ```
 
 # Build
