@@ -1,9 +1,11 @@
 # Table of Content
 
 * [Usage](#usage)
-    * [Cygwin](#cygwin)
-    * [Windows](#windows)
-    * [Linux](#linux)
+    * [Loading Extensions](#loading-extensions)
+        * [Cygwin](#cygwin)
+        * [Windows](#windows)
+        * [Linux](#linux)
+    * Exampe(#example)
 * [Build](#build)
     * [Cygwin](#cygwin-64-bit)
     * [Windows](#windows-64-bit)
@@ -12,7 +14,9 @@
 
 # Usage
 
-## Cygwin
+## Loading Extensions
+
+### Cygwin
 
 ```
 $ sqlite3
@@ -20,7 +24,7 @@ sqlite> .load 'bin/CYG64/uuid.so'
 sqlite> .load 'bin/CYG64/regexp.so'
 ```
 
-## Windows
+### Windows
 
 ```
 $ sqlite3
@@ -28,12 +32,27 @@ sqlite> .load 'bin/WIN64/uuid.dll'
 sqlite> .load 'bin/WIN64/regexp.dll'
 ```
 
-## Linux
+### Linux
 
 ```
 $ sqlite3
 sqlite> .load 'bin/UNIX64/uuid.so'
 sqlite> .load 'bin/UNIX64/regexp.so'
+```
+
+## Example
+
+The extensions have to [loaded](#loading-extensions) beforehand.
+
+```
+sqlite> SELECT uuid();
+afe6ae32-320b-44c2-bff8-f9cb4c7aa6b6
+sqlite> SELECT uuid();
+48c5fe0f-5488-41f7-aa40-706cdb98d080
+sqlite> SELECT regexp('^[0-9a-f]{8}(-[0-9a-f]{4}){4}[0-9a-f]{8}$', uuid());
+1
+sqlite> SELECT regexp('^[0-9a-f]{8}(-[0-9a-f]{4}){4}[0-9a-f]{8}$', 'I am not a UUID');
+0
 ```
 
 # Build
