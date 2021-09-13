@@ -1,10 +1,14 @@
+PROJECTS   = regexp uuid udp
+
 REGEXP_SRC = $(wildcard regexp/*.c)
 UUID_SRC   = $(wildcard uuid/*.c)
+UDP_SRC    = $(wildcard udp/*.c)
 
 OUT_DIR    = bin
 
 REGEXP_TARGET = regexp.so
 UUID_TARGET   = uuid.so
+UDP_TARGET    = udp.so
 
 # Default targeting operating system (os).
 TARGET_OS    = CYG64
@@ -18,19 +22,21 @@ endif
 # Differentiate between Windows and none Windows
 ifneq (,$(findstring WIN,$(TARGET_OS)))
 CC             = x86_64-w64-mingw32-gcc
-CFLAGS         = -g -shared -Isqlite
+CFLAGS         = -g -shared -Isqlite -Wall
 REGEXP_TARGET := $(REGEXP_TARGET:.so=.dll)
 UUID_TARGET   := $(UUID_TARGET:.so=.dll)
+UDP_TARGET    := $(UDP_TARGET:.so=.dll)
 else
 CC             = gcc
-CFLAGS         = -g -fPIC -shared -Isqlite
+CFLAGS         = -g -fPIC -shared -Isqlite -Wall
 endif
 
 # Prepend directory to target files
 REGEXP_TARGET := $(OUT_DIR)/$(TARGET_OS)/$(REGEXP_TARGET)
 UUID_TARGET   := $(OUT_DIR)/$(TARGET_OS)/$(UUID_TARGET)
+UDP_TARGET   := $(OUT_DIR)/$(TARGET_OS)/$(UDP_TARGET)
 
-all: regexp uuid
+all: $(PROJECTS)
 	@echo "Built for os '$(TARGET_OS)' with sqlite header file version 3.36.0."
 
 regexp: $(REGEXP_TARGET)
@@ -46,6 +52,13 @@ uuid: $(UUID_TARGET)
 $(UUID_TARGET): $(UUID_SRC)
 	@mkdir -p $(@D)
 	$(CC) -o $(UUID_TARGET) $(CFLAGS) $(UUID_SRC)
+
+udp: $(UDP_TARGET)
+	@echo "Built $(UDP_TARGET)"
+
+$(UDP_TARGET): $(UDP_SRC)
+	@mkdir -p $(@D)
+	$(CC) -o $(UDP_TARGET) $(CFLAGS) $(UDP_SRC) -lWs2_32
 
 clean:
 	rm -rf bin
