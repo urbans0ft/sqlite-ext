@@ -12,7 +12,7 @@ UDP_TARGET    = udp.so
 
 # Default targeting operating system (os).
 TARGET_OS    = CYG64
-SUPPORTED_OS = CYG64 UNIX64 WIN64
+SUPPORTED_OS = CYG64 UNIX64 WIN64 WIN32
 
 # Error if targeting os is not in supported os list
 ifeq (,$(findstring $(TARGET_OS),$(SUPPORTED_OS)))
@@ -21,8 +21,13 @@ endif
 
 # Differentiate between Windows and none Windows
 ifneq (,$(findstring WIN,$(TARGET_OS)))
+ifneq (,$(findstring 64,$(TARGET_OS)))
 CC             = x86_64-w64-mingw32-gcc
-CFLAGS         = -g -shared -Isqlite -Wall
+else
+CC             = i686-w64-mingw32-gcc
+endif
+CFLAGS         = -Isqlite -Wall -ffunction-sections -fdata-sections
+LFLAGS         = -s -shared -static -Wl,--subsystem,windows,--gc-sections
 REGEXP_TARGET := $(REGEXP_TARGET:.so=.dll)
 UUID_TARGET   := $(UUID_TARGET:.so=.dll)
 UDP_TARGET    := $(UDP_TARGET:.so=.dll)
@@ -58,7 +63,7 @@ udp: $(UDP_TARGET)
 
 $(UDP_TARGET): $(UDP_SRC)
 	@mkdir -p $(@D)
-	$(CC) -o $(UDP_TARGET) $(CFLAGS) $(UDP_SRC) -lWs2_32
+	$(CC) -o $(UDP_TARGET) $(CFLAGS) $(UDP_SRC) $(LFLAGS) -lWs2_32
 
 clean:
 	rm -rf bin

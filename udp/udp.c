@@ -15,7 +15,7 @@ SQLITE_EXTENSION_INIT1
 
 #define DEFAULT_PORT "27015"
 
-static int sqlite3UdpSend(const char *sendbuf, int len)
+static int sqlite3UdpSend(const unsigned char *sendbuf, int len)
 {
 	WSADATA wsaData;
 	int iResult;
@@ -55,7 +55,7 @@ static int sqlite3UdpSend(const char *sendbuf, int len)
 		ptr->ai_protocol);
 		
 	if (ConnectSocket == INVALID_SOCKET) {
-		printf("Error at socket(): %ld\n", WSAGetLastError());
+		printf("Error at socket(): %d\n", WSAGetLastError());
 		freeaddrinfo(result);
 		WSACleanup();
 		return 1;
@@ -85,7 +85,7 @@ static int sqlite3UdpSend(const char *sendbuf, int len)
 	// send data
 
 	// Send an initial buffer
-	iResult = send(ConnectSocket, sendbuf, len, 0);
+	iResult = send(ConnectSocket, (const char*)sendbuf, len, 0);
 	if (iResult == SOCKET_ERROR) {
 		printf("send failed: %d\n", WSAGetLastError());
 		closesocket(ConnectSocket);
@@ -93,7 +93,7 @@ static int sqlite3UdpSend(const char *sendbuf, int len)
 		return 1;
 	}
 
-	printf("Bytes Sent: %ld\n", iResult);
+	printf("Bytes Sent: %d\n", iResult);
 
 	// shutdown the connection for sending since no more data will be sent
 	// the client can still use the ConnectSocket for receiving data
@@ -105,7 +105,7 @@ static int sqlite3UdpSend(const char *sendbuf, int len)
 		return 1;
 	}
 	
-	WSACleanup();
+	return WSACleanup();
 }
 
 /* Insert your extension code here */
@@ -118,7 +118,8 @@ static void sqlite3UdpFunc(
 	(void)argv;
 	printf("DEBUG: %i\n", sqlite3_value_int(argv[0]));
 	sqlite3UdpSend(sqlite3_value_text(argv[0]), sqlite3_value_bytes(argv[0]));
-	sqlite3_result_text(context, sqlite3_value_text(argv[0]), sqlite3_value_bytes(argv[0]), SQLITE_TRANSIENT);
+	//sqlite3_result_text(context, sqlite3_value_text(argv[0]), sqlite3_value_bytes(argv[0]), SQLITE_TRANSIENT);
+	sqlite3_result_int(context, SQLITE_OK);
 }
 
 
@@ -145,7 +146,6 @@ int sqlite3_udp_init(
 	**     sqlite3_vfs_register()
 	** to register the new features that your extension adds.
 	*/
-	printf("TEXT\n");
 	rc = sqlite3_create_function(
 		db, //sqlite3 *db,
 		"udp", //const char *zFunctionName,
