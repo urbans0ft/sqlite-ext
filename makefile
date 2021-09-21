@@ -36,6 +36,11 @@ CC             = gcc
 CFLAGS         = -g -fPIC -shared -Isqlite -Wall
 endif
 
+# parse command line arguments
+ifdef DEBUG
+	CFLAGS += -DDEBUG
+endif
+
 # Prepend directory to target files
 REGEXP_TARGET := $(OUT_DIR)/$(TARGET_OS)/$(REGEXP_TARGET)
 UUID_TARGET   := $(OUT_DIR)/$(TARGET_OS)/$(UUID_TARGET)
