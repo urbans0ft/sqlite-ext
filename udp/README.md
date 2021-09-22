@@ -6,7 +6,7 @@ Usage
 
 ### Inception
 
-Load the udp extension in the following example the extension which was build for the
+Load the udp extension. In the following example the extension which has been build for the
 Cygwin (64-bit) environment is loaded.
 
 ```
@@ -45,7 +45,7 @@ UPDATE _udp SET Server = "127.0.0.1", Port = 12345;
 
 Trigger prohibit deletion as well as insertion of further rows to the `_udp` table.  
 **The sqlite3 process needs to be exited and the extension must be loaded again for the
-configuration to becaume active!**
+configuration to become active!**
 
 ### Misch
 
