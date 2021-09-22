@@ -153,10 +153,8 @@ static int sqlite3UdpSend(sqlite3* db, const unsigned char *sendbuf, int len)
 
 /* Insert your extension code here */
 static void sqlite3UdpFunc(
-	sqlite3_context *context,
-	int argc,
-	sqlite3_value **argv
-){
+	sqlite3_context *context, int argc, sqlite3_value **argv)
+{
 	(void)argc;
 	(void)argv;
 	sqlite3* db = sqlite3_context_db_handle(context);
@@ -164,22 +162,11 @@ static void sqlite3UdpFunc(
 	sqlite3_result_int(context, SQLITE_OK);
 }
 
-static int callback(void *NotUsed, int argc, char **argv, char **azColName){
-	int i;
-	for(i=0; i<argc; i++){
-		DBGPRINT("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-	}
-	return 0;
-}
-
 static void sqlite3UdpPort(
-	sqlite3_context *context,
-	int argc,
-	sqlite3_value **argv
-){
+	sqlite3_context *context, int argc, sqlite3_value **argv)
+{
 	(void)argc;
 	(void)argv;
-	int rc = SQLITE_OK;
 	sqlite3* db = sqlite3_context_db_handle(context);
 	sqlite3_result_text(context, getUdpPort(db), -1, NULL);
 }
