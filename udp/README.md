@@ -47,7 +47,7 @@ Trigger prohibit deletion as well as insertion of further rows to the `_udp` tab
 **The sqlite3 process needs to be exited and the extension must be loaded again for the
 configuration to become active!**
 
-### Misch
+### Misc
 
 Further functions include:
 
