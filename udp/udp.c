@@ -26,7 +26,39 @@ SQLITE_EXTENSION_INIT1
 
 #define DEFAULT_PORT "27015"
 
-static int sqlite3UdpSend(const unsigned char *sendbuf, int len)
+static int getSingeValue(void *value, int argc, char **argv, char **azColName){
+	char** szValue = (char**)value;
+	DBGPRINT("%s = %s\n", azColName[0], argv[0] ? argv[0] : "NULL");
+	*szValue = sqlite3_malloc(strlen(argv[0]) + 1);
+	strcpy(*szValue, argv[0]);
+	return 0;
+}
+
+static char* getUdpServer(sqlite3* db)
+{
+	static char* server = 0;
+	if (server == 0)
+	{
+		DBGPRINT("Initializing 'server'.");
+		sqlite3_exec(db, "SELECT Server FROM _udp", getSingeValue, &server, NULL);
+	}
+	DBGPRINT("server is %s", server);
+	return server;
+}
+
+static char* getUdpPort(sqlite3* db)
+{
+	static char* port = 0;
+	if (port == 0)
+	{
+		DBGPRINT("Initializing 'port'.");
+		sqlite3_exec(db, "SELECT Port FROM _udp", getSingeValue, &port, NULL);
+	}
+	DBGPRINT("port is %s", port);
+	return port;
+}
+
+static int sqlite3UdpSend(sqlite3* db, const unsigned char *sendbuf, int len)
 {
 	WSADATA wsaData;
 	int iResult;
@@ -48,7 +80,7 @@ static int sqlite3UdpSend(const unsigned char *sendbuf, int len)
 	hints.ai_protocol = IPPROTO_UDP; // UDP
 	
 	// Resolve the server address and port
-	iResult = getaddrinfo("localhost", DEFAULT_PORT, &hints, &result);
+	iResult = getaddrinfo(getUdpServer(db), getUdpPort(db), &hints, &result);
 	if (iResult != 0) {
 		printf("getaddrinfo failed: %d\n", iResult);
 		WSACleanup();
@@ -127,7 +159,8 @@ static void sqlite3UdpFunc(
 ){
 	(void)argc;
 	(void)argv;
-	sqlite3UdpSend(sqlite3_value_text(argv[0]), sqlite3_value_bytes(argv[0]));
+	sqlite3* db = sqlite3_context_db_handle(context);
+	sqlite3UdpSend(db, sqlite3_value_text(argv[0]), sqlite3_value_bytes(argv[0]));
 	sqlite3_result_int(context, SQLITE_OK);
 }
 
@@ -146,15 +179,9 @@ static void sqlite3UdpPort(
 ){
 	(void)argc;
 	(void)argv;
-	int rc;
+	int rc = SQLITE_OK;
 	sqlite3* db = sqlite3_context_db_handle(context);
-	char *zErrMsg = 0;
-	rc = sqlite3_exec(db, "SELECT * FROM _udp", callback, 0, &zErrMsg);
-	if( rc!=SQLITE_OK ){
-		fprintf(stderr, "SQL error: %s\n", zErrMsg);
-		sqlite3_free(zErrMsg);
-	}
-	sqlite3_result_text(context, DEFAULT_PORT, -1, NULL);
+	sqlite3_result_text(context, getUdpPort(db), -1, NULL);
 }
 
 #ifdef _WIN32
