@@ -254,7 +254,7 @@ int sqlite3_udp_init(
 	
 	if (rc != SQLITE_OK)
 	{
-		printf("Could not create function: sqlite3UdpFunc");
+		printf("Could not create function: sqlite3UdpVersion");
 		return rc;
 	}
 	
