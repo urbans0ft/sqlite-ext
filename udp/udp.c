@@ -21,6 +21,7 @@ SQLITE_EXTENSION_INIT1
 #define STR(x) STR_HELPER(x)
 
 #define VERSION STR(MAJOR) "." STR(MINOR) "." STR(PATCH)
+#define COMPILATION VERSION " " __DATE__ " " __TIME__
 
 //#pragma comment(lib, "Ws2_32.lib")
 
@@ -171,6 +172,14 @@ static void sqlite3UdpPort(
 	sqlite3_result_text(context, getUdpPort(db), -1, NULL);
 }
 
+static void sqlite3UdpVersion(
+	sqlite3_context *context, int argc, sqlite3_value **argv)
+{
+	(void)argc;
+	(void)argv;
+	sqlite3_result_text(context, COMPILATION, -1, NULL);
+}
+
 #ifdef _WIN32
 __declspec(dllexport)
 #endif
@@ -207,6 +216,12 @@ int sqlite3_udp_init(
 		NULL                                //void (*xFinal)(sqlite3_context*)
 	);
 	
+	if (rc != SQLITE_OK)
+	{
+		printf("Could not create function: sqlite3UdpFunc");
+		return rc;
+	}
+	
 	DBGPRINT("sqlite3_create_function: sqlite3UdpPort");
 	rc = sqlite3_create_function(
 		db,                                 //sqlite3 *db,
@@ -218,6 +233,30 @@ int sqlite3_udp_init(
 		NULL,                               //void (*xStep)(sqlite3_context*,int,sqlite3_value**),
 		NULL                                //void (*xFinal)(sqlite3_context*)
 	);
+	
+	if (rc != SQLITE_OK)
+	{
+		printf("Could not create function: sqlite3UdpPort");
+		return rc;
+	}
+	
+	DBGPRINT("sqlite3_create_function: sqlite3UdpVersion");
+	rc = sqlite3_create_function(
+		db,                                 //sqlite3 *db,
+		"udp_version",                      //const char *zFunctionName,
+		0,                                  //int nArg,
+		SQLITE_UTF8 | SQLITE_DETERMINISTIC, //int eTextRep,
+		NULL,                               //void *pApp,
+		sqlite3UdpVersion,                  //void (*xFunc)(sqlite3_context*,int,sqlite3_value**),
+		NULL,                               //void (*xStep)(sqlite3_context*,int,sqlite3_value**),
+		NULL                                //void (*xFinal)(sqlite3_context*)
+	);
+	
+	if (rc != SQLITE_OK)
+	{
+		printf("Could not create function: sqlite3UdpFunc");
+		return rc;
+	}
 	
 	return rc;
 }
