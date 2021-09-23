@@ -33,7 +33,8 @@ UUID_TARGET   := $(UUID_TARGET:.so=.dll)
 UDP_TARGET    := $(UDP_TARGET:.so=.dll)
 else
 CC             = gcc
-CFLAGS         = -g -fPIC -shared -Isqlite -Wall
+CFLAGS         = -Isqlite -Wall -fPIC
+LFLAGS         = -s -shared
 endif
 
 # parse command line arguments
@@ -44,7 +45,7 @@ endif
 # Prepend directory to target files
 REGEXP_TARGET := $(OUT_DIR)/$(TARGET_OS)/$(REGEXP_TARGET)
 UUID_TARGET   := $(OUT_DIR)/$(TARGET_OS)/$(UUID_TARGET)
-UDP_TARGET   := $(OUT_DIR)/$(TARGET_OS)/$(UDP_TARGET)
+UDP_TARGET    := $(OUT_DIR)/$(TARGET_OS)/$(UDP_TARGET)
 
 all: $(PROJECTS)
 	@echo "Built for os '$(TARGET_OS)' with sqlite header file version 3.36.0."
@@ -54,14 +55,14 @@ regexp: $(REGEXP_TARGET)
 
 $(REGEXP_TARGET): $(REGEXP_SRC)
 	@mkdir -p $(@D)
-	$(CC) -o $(REGEXP_TARGET) $(CFLAGS) $(REGEXP_SRC)
+	$(CC) -o $(REGEXP_TARGET) $(CFLAGS) $(REGEXP_SRC) $(LFLAGS)
 
 uuid: $(UUID_TARGET)
 	@echo "Built $(UUID_TARGET)"
 
 $(UUID_TARGET): $(UUID_SRC)
 	@mkdir -p $(@D)
-	$(CC) -o $(UUID_TARGET) $(CFLAGS) $(UUID_SRC)
+	$(CC) -o $(UUID_TARGET) $(CFLAGS) $(UUID_SRC) $(LFLAGS)
 
 udp: $(UDP_TARGET)
 	@echo "Built $(UDP_TARGET)"
