@@ -6,36 +6,21 @@ UDP_SRC    = $(wildcard udp/*.c)
 
 OUT_DIR    = bin
 
-REGEXP_TARGET = regexp.so
-UUID_TARGET   = uuid.so
-UDP_TARGET    = udp.so
+REGEXP_TARGET = regexp
+UUID_TARGET   = uuid
+UDP_TARGET    = udp
 
 # Default targeting operating system (os).
-TARGET_OS    = CYG64
-SUPPORTED_OS = CYG64 UNIX64 WIN64 WIN32
+SUPPORTED_TARGETS = cygwin unix win32 win64 clean
 
 # Error if targeting os is not in supported os list
-ifeq (,$(findstring $(TARGET_OS),$(SUPPORTED_OS)))
-$(error Target OS '$(TARGET_OS)' is not supported.)
+ifeq (,$(findstring $(MAKECMDGOALS),$(SUPPORTED_TARGETS)))
+$(error Target OS '$(MAKECMDGOALS)' is not supported.)
 endif
 
-# Differentiate between Windows and none Windows
-ifneq (,$(findstring WIN,$(TARGET_OS)))
-ifneq (,$(findstring 64,$(TARGET_OS)))
-CC             = x86_64-w64-mingw32-gcc
-else
-CC             = i686-w64-mingw32-gcc
-endif
-CFLAGS         = -Isqlite -Wall -ffunction-sections -fdata-sections
-LFLAGS         = -s -shared -static -Wl,--subsystem,windows,--gc-sections
-REGEXP_TARGET := $(REGEXP_TARGET:.so=.dll)
-UUID_TARGET   := $(UUID_TARGET:.so=.dll)
-UDP_TARGET    := $(UDP_TARGET:.so=.dll)
-else
-CC             = gcc
-CFLAGS         = -Isqlite -Wall -fPIC
+CFLAGS         = -Isqlite -Wall
 LFLAGS         = -s -shared
-endif
+
 
 # parse command line arguments
 ifdef DEBUG
@@ -43,12 +28,34 @@ ifdef DEBUG
 endif
 
 # Prepend directory to target files
-REGEXP_TARGET := $(OUT_DIR)/$(TARGET_OS)/$(REGEXP_TARGET)
-UUID_TARGET   := $(OUT_DIR)/$(TARGET_OS)/$(UUID_TARGET)
-UDP_TARGET    := $(OUT_DIR)/$(TARGET_OS)/$(UDP_TARGET)
+REGEXP_TARGET := $(OUT_DIR)/$(MAKECMDGOALS)/$(REGEXP_TARGET)
+UUID_TARGET   := $(OUT_DIR)/$(MAKECMDGOALS)/$(UUID_TARGET)
+UDP_TARGET    := $(OUT_DIR)/$(MAKECMDGOALS)/$(UDP_TARGET)
 
 all: $(PROJECTS)
-	@echo "Built for os '$(TARGET_OS)' with sqlite header file version 3.36.0."
+	@echo "Built for os '$(MAKECMDGOALS)' with sqlite header file version 3.36.0."
+
+win32: CC = i686-w64-mingw32-gcc
+win32: win
+
+win64: CC = x86_64-w64-mingw32-gcc
+win64: win
+
+win: CFLAGS        += -ffunction-sections -fdata-sections
+win: LFLAGS        += -static -Wl,--subsystem,windows,--gc-sections
+win: REGEXP_TARGET := $(REGEXP_TARGET).dll
+win: UUID_TARGET   := $(UUID_TARGET).dll
+win: UDP_TARGET    := $(UDP_TARGET).dll
+
+cygwin unix: CC             = gcc
+cygwin unix: CFLAGS        += -fPIC
+cygwin unix: REGEXP_TARGET := $(REGEXP_TARGET).so
+cygwin unix: UUID_TARGET   := $(UUID_TARGET).so
+cygwin unix: UDP_TARGET    := $(UDP_TARGET).so
+
+
+win cygwin unix: all
+
 
 regexp: $(REGEXP_TARGET)
 	@echo "Built $(REGEXP_TARGET)"
