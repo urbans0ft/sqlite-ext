@@ -11,7 +11,8 @@ UUID_TARGET   = uuid
 UDP_TARGET    = udp
 
 # Default targeting operating system (os).
-SUPPORTED_TARGETS = cygwin unix win32 win64 clean
+SUPPORTED_OS = cygwin unix win32 win64
+SUPPORTED_TARGETS = $(SUPPORTED_OS) clean ls-os
 
 # Error if targeting os is not in supported os list
 ifeq (,$(findstring $(MAKECMDGOALS),$(SUPPORTED_TARGETS)))
