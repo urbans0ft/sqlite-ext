@@ -1,0 +1,6 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Denote all files should not be modified.
+sqlite3.h binary
+sqlite3ext.h binary

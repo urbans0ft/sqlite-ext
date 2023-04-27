@@ -1,7 +1,8 @@
 # ignore hidden files...
 .*
 
-# ... but not this one
+# ... but these
+!.gitattributes
 !.gitignore
 
 bin/
