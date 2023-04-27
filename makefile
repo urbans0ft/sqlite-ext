@@ -13,11 +13,13 @@ UDP_TARGET    = udp
 # detect the current dev environment
 ifeq '$(findstring ;,$(PATH))' ';'
     UNAME := Windows
+	mkdir = @mkdir $(subst /,\,$(1)) >nul 2>&1 || (exit 0)
 else
     UNAME := $(shell uname 2>/dev/null || echo Unknown)
     UNAME := $(patsubst CYGWIN%,Cygwin,$(UNAME))
     UNAME := $(patsubst MSYS%,MSYS,$(UNAME))
     UNAME := $(patsubst MINGW%,MSYS,$(UNAME))
+	mkdir = @mkdir -p $(1)
 endif
 
 # Default targeting operating system (os).
@@ -78,28 +80,25 @@ regexp: $(REGEXP_TARGET)
 	@echo "Built $(REGEXP_TARGET)"
 
 $(REGEXP_TARGET): $(REGEXP_SRC)
-	@mkdir -p $(@D)
+	$(call mkdir, $(@D))
 	$(CC) -o $(REGEXP_TARGET) $(CFLAGS) $(REGEXP_SRC) $(LFLAGS)
 
 uuid: $(UUID_TARGET)
 	@echo "Built $(UUID_TARGET)"
 
 $(UUID_TARGET): $(UUID_SRC)
-	@mkdir -p $(@D)
+	$(call mkdir, $(@D))
 	$(CC) -o $(UUID_TARGET) $(CFLAGS) $(UUID_SRC) $(LFLAGS)
 
 udp: $(UDP_TARGET)
 	@echo "Built $(UDP_TARGET)"
 
 $(UDP_TARGET): $(UDP_SRC)
-	@mkdir -p $(@D)
+	$(call mkdir, $(@D))
 	$(CC) -o $(UDP_TARGET) $(CFLAGS) $(UDP_SRC) $(LFLAGS) -lWs2_32
 
 clean:
 	rm -rf bin
 
 ls-os:
-	@echo "###"
-	@echo $(UNAME)
-	@echo "###"
 	@echo $(SUPPORTED_OS)
