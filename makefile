@@ -10,13 +10,29 @@ REGEXP_TARGET = regexp
 UUID_TARGET   = uuid
 UDP_TARGET    = udp
 
+# detect the current dev environment
+ifeq '$(findstring ;,$(PATH))' ';'
+    UNAME := Windows
+else
+    UNAME := $(shell uname 2>/dev/null || echo Unknown)
+    UNAME := $(patsubst CYGWIN%,Cygwin,$(UNAME))
+    UNAME := $(patsubst MSYS%,MSYS,$(UNAME))
+    UNAME := $(patsubst MINGW%,MSYS,$(UNAME))
+endif
+
 # Default targeting operating system (os).
-SUPPORTED_OS = cygwin unix win32 win64
+ifeq ($(UNAME),Windows)
+SUPPORTED_OS = win32 win64
+else ifeq ($(UNAME),Cygwin)
+SUPPORTED_OS = cygwin win32 win64
+else
+SUPPORTED_OS = unix
+endif
 SUPPORTED_TARGETS = $(SUPPORTED_OS) clean ls-os
 
 # Error if targeting os is not in supported os list
 ifeq (,$(findstring $(MAKECMDGOALS),$(SUPPORTED_TARGETS)))
-$(error Target OS '$(MAKECMDGOALS)' is not supported.)
+$(error Target OS '$(MAKECMDGOALS)' is not supported use `make ls-os` to get a list of supported targets)
 endif
 
 CFLAGS         = -Isqlite -Wall
@@ -83,4 +99,7 @@ clean:
 	rm -rf bin
 
 ls-os:
+	@echo "###"
+	@echo $(UNAME)
+	@echo "###"
 	@echo $(SUPPORTED_OS)

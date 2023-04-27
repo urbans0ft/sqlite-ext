@@ -102,6 +102,7 @@ C:\Cygwin\setup-x86_64.exe -f -g -v -l C:\Cygwin -R C:\Cygwin -n -O -s http://cy
 ```
 
 You can start a new _Cygwin_ terminal by pressing `<win>+r` and running the following command:
+
 ```
 C:\Cygwin\bin\mintty.exe -i /Cygwin-Terminal.ico -
 ```
