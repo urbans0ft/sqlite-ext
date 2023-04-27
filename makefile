@@ -13,6 +13,10 @@ UUID_TARGET   = uuid
 UDP_TARGET    = udp
 
 # detect the current dev environment
+https://stackoverflow.com/a/52062069
+https://stackoverflow.com/a/14777895
+# os agnostic mkdir
+https://stackoverflow.com/a/30225575
 ifeq '$(findstring ;,$(PATH))' ';'
     UNAME := Windows
 	mkdir = @mkdir $(subst /,\,$(1)) >nul 2>&1 || (exit 0)
@@ -44,7 +48,6 @@ endif
 
 CFLAGS         = -Isqlite -Wall
 LFLAGS         = -s -shared
-
 
 # parse command line arguments
 ifdef DEBUG
