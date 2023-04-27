@@ -93,6 +93,18 @@ Install the latest [Cygwin](https://www.cygwin.com/setup-x86_64.exe) with the fo
 - `mingw64-x86_64-gcc-core`  
   GNU Compiler Collection (C-language for Win64 builds)
 
+You might use the following script to setup the development environment:
+
+```
+if not exist C:\Cygwin mkdir C:\Cygwin
+curl -L "https://www.cygwin.com/setup-x86_64.exe" --output "C:\Cygwin\setup-x86_64.exe"
+C:\Cygwin\setup-x86_64.exe -f -g -v -l C:\Cygwin -R C:\Cygwin -n -O -s http://cygwin.mirror.constant.com/ -q -P gcc-core,make,mingw64-i686-gcc-core,mingw64-x86_64-gcc-core
+```
+
+You can start a new _Cygwin_ terminal by pressing `<win>+r` and running the following command:
+```
+C:\Cygwin\bin\mintty.exe -i /Cygwin-Terminal.ico -
+```
 
 ## Build
 
