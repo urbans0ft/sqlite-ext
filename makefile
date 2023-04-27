@@ -1,5 +1,7 @@
 PROJECTS   = regexp uuid udp
 
+SQLITE_VERSION = 3.41.2
+
 REGEXP_SRC = $(wildcard regexp/*.c)
 UUID_SRC   = $(wildcard uuid/*.c)
 UDP_SRC    = $(wildcard udp/*.c)
@@ -55,7 +57,7 @@ UUID_TARGET   := $(OUT_DIR)/$(MAKECMDGOALS)/$(UUID_TARGET)
 UDP_TARGET    := $(OUT_DIR)/$(MAKECMDGOALS)/$(UDP_TARGET)
 
 all: $(PROJECTS)
-	@echo "Built for os '$(MAKECMDGOALS)' with sqlite header file version 3.36.0."
+	@echo "Built for os '$(MAKECMDGOALS)' with sqlite header file version $(SQLITE_VERSION)"
 
 win32: CC = i686-w64-mingw32-gcc
 win32: win
