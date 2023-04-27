@@ -14,12 +14,15 @@ UDP_TARGET    = udp
 ifeq '$(findstring ;,$(PATH))' ';'
     UNAME := Windows
 	mkdir = @mkdir $(subst /,\,$(1)) >nul 2>&1 || (exit 0)
+	rmdir = @rmdir /s /q $(subst /,\,$(1)) >nul 2>&1 || (exit 0)
 else
     UNAME := $(shell uname 2>/dev/null || echo Unknown)
     UNAME := $(patsubst CYGWIN%,Cygwin,$(UNAME))
     UNAME := $(patsubst MSYS%,MSYS,$(UNAME))
     UNAME := $(patsubst MINGW%,MSYS,$(UNAME))
 	mkdir = @mkdir -p $(1)
+	rmdir = @rm -rf $(1)
+	
 endif
 
 # Default targeting operating system (os).
@@ -98,7 +101,7 @@ $(UDP_TARGET): $(UDP_SRC)
 	$(CC) -o $(UDP_TARGET) $(CFLAGS) $(UDP_SRC) $(LFLAGS) -lWs2_32
 
 clean:
-	rm -rf bin
+	$(call rmdir, bin)
 
 ls-os:
 	@echo $(SUPPORTED_OS)
