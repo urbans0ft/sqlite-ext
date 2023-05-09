@@ -1,16 +1,21 @@
-PROJECTS   = regexp uuid udp
+# Add new targets here (<name>_TARGET) and add the new target variable to the PROJECTS variable.
+REGEXP_TARGET = regexp
+UUID_TARGET   = uuid
+UDP_TARGET    = udp
 
+# Define projects to build (some might not build on all platforms). Add **all** targtes to
+# PROJECTS and exclude them later (see below) where SUPPORTED_OS is set.
+PROJECTS = $(REGEXP_TARGET) $(UUID_TARGET) $(UDP_TARGET)
+
+# Currently used sqlite version (merely informational purpose).
 SQLITE_VERSION = 3.41.2
 
+# Each target has its own source dir.
 REGEXP_SRC = $(wildcard regexp/*.c)
 UUID_SRC   = $(wildcard uuid/*.c)
 UDP_SRC    = $(wildcard udp/*.c)
 
 OUT_DIR    = bin
-
-REGEXP_TARGET = regexp
-UUID_TARGET   = uuid
-UDP_TARGET    = udp
 
 # detect the current dev environment
 https://stackoverflow.com/a/52062069
@@ -28,7 +33,6 @@ else
     UNAME := $(patsubst MINGW%,MSYS,$(UNAME))
 	mkdir = @mkdir -p $(1)
 	rmdir = @rm -rf $(1)
-	
 endif
 
 # Default targeting operating system (os).
@@ -38,6 +42,8 @@ else ifeq ($(UNAME),Cygwin)
 SUPPORTED_OS = cygwin win32 win64
 else
 SUPPORTED_OS = unix
+# Can't build 'udp' on unix yet.
+PROJECTS := $(filter-out $(UDP_TARGET),$(PROJECTS))
 endif
 SUPPORTED_TARGETS = $(SUPPORTED_OS) clean ls-os
 
