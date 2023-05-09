@@ -58,12 +58,15 @@ LFLAGS         = -s -shared
 # parse command line arguments
 ifdef DEBUG
 	CFLAGS += -DDEBUG
+	OUT_DIR    := $(OUT_DIR)/$(MAKECMDGOALS)/debug
+else
+	OUT_DIR    := $(OUT_DIR)/$(MAKECMDGOALS)/release
 endif
 
 # Prepend directory to target files
-REGEXP_TARGET := $(OUT_DIR)/$(MAKECMDGOALS)/$(REGEXP_TARGET)
-UUID_TARGET   := $(OUT_DIR)/$(MAKECMDGOALS)/$(UUID_TARGET)
-UDP_TARGET    := $(OUT_DIR)/$(MAKECMDGOALS)/$(UDP_TARGET)
+REGEXP_TARGET := $(OUT_DIR)/$(REGEXP_TARGET)
+UUID_TARGET   := $(OUT_DIR)/$(UUID_TARGET)
+UDP_TARGET    := $(OUT_DIR)/$(UDP_TARGET)
 
 all: $(PROJECTS)
 	@echo "Built for os '$(MAKECMDGOALS)' with sqlite header file version $(SQLITE_VERSION)"
